@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VietQR Salary Batch</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root{
+      --bg:#f6f7f9;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--brand:#0f766e;--brand2:#115e59;--danger:#dc2626;--warn:#d97706;--ok:#15803d;
+      --shadow:0 10px 30px rgba(15,23,42,.08);--radius:18px;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    header{position:sticky;top:0;z-index:20;background:rgba(246,247,249,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .wrap{max-width:1260px;margin:0 auto;padding:18px 20px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#0f766e,#22c55e);display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:var(--shadow)}
+    h1{font-size:20px;margin:0}.sub{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:390px 1fr;gap:18px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}.card h2{font-size:16px;margin:0 0 10px}.field{display:grid;gap:6px;margin:10px 0}.field label{font-weight:650;font-size:13px}.field input,.field textarea,.field select{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:10px 12px;font:inherit;background:#fff}.field textarea{min-height:230px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}.row{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid transparent;background:#111827;color:#fff;border-radius:12px;padding:10px 13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;white-space:nowrap}.btn:hover{filter:brightness(.95)}.btn.primary{background:var(--brand)}.btn.soft{background:#ecfdf5;color:#065f46;border-color:#a7f3d0}.btn.gray{background:#f3f4f6;color:#111827;border-color:#e5e7eb}.btn.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}.btn.danger{background:#fef2f2;color:#991b1b;border-color:#fecaca}.btn:disabled{opacity:.55;cursor:not-allowed}.tiny{font-size:12px;color:var(--muted)}.notice{padding:10px 12px;border:1px solid #fde68a;background:#fffbeb;border-radius:13px;color:#92400e;margin:10px 0}.okbox{padding:10px 12px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:13px;color:#166534;margin:10px 0}.errorbox{padding:10px 12px;border:1px solid #fecaca;background:#fef2f2;border-radius:13px;color:#991b1b;margin:10px 0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.stat{padding:12px;border:1px solid var(--line);border-radius:16px;background:#fff}.stat b{display:block;font-size:18px}.stat span{font-size:12px;color:var(--muted)}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}.pay-table{width:100%;border-collapse:collapse;min-width:1040px}.pay-table th,.pay-table td{border-bottom:1px solid var(--line);padding:8px;vertical-align:top}.pay-table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#475569;background:#f8fafc;text-align:left;position:sticky;top:0;z-index:1}.pay-table input,.pay-table select{width:100%;border:1px solid #d1d5db;border-radius:9px;padding:7px 8px;font:inherit;background:#fff}.pay-table .num{text-align:right}.status{font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;display:inline-block}.status.ok{background:#dcfce7;color:#166534}.status.warn{background:#fef3c7;color:#92400e}.status.err{background:#fee2e2;color:#991b1b}.qr-grid{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:16px;margin-top:16px}.qr-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;break-inside:avoid;box-shadow:0 4px 14px rgba(15,23,42,.04)}.qr-card h3{margin:0 0 5px;font-size:15px}.qr-img{width:100%;max-width:360px;display:block;margin:8px auto;border-radius:12px;border:1px solid #f1f5f9;background:#fff}.kv{display:grid;grid-template-columns:105px 1fr;gap:4px 8px;font-size:12.5px}.kv div:nth-child(odd){color:#64748b}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.pill{display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border-radius:999px;padding:5px 9px;color:#475569;font-size:12px}.split{display:flex;align-items:center;justify-content:space-between;gap:10px}.hidden{display:none!important}.footer{color:#64748b;font-size:12px;margin-top:18px}.drop{border:1.5px dashed #cbd5e1;border-radius:16px;background:#f8fafc;padding:14px;text-align:center}.history-item{display:flex;justify-content:space-between;gap:8px;border:1px solid var(--line);padding:8px 10px;border-radius:12px;margin:8px 0;background:#fff}.history-item button{padding:6px 8px;border-radius:9px;border:1px solid var(--line);background:#f8fafc;cursor:pointer}.danger-text{color:var(--danger)}.copyable{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+    @media (max-width: 1000px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.qr-grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.wrap{padding:14px}}
+    @media print{body{background:white}.no-print,header,.left-panel,.table-card{display:none!important}.wrap{max-width:100%;padding:0}.grid{display:block}.card{box-shadow:none;border:none;padding:0}.qr-grid{grid-template-columns:repeat(2,1fr);gap:10px}.qr-card{box-shadow:none;page-break-inside:avoid}.qr-img{max-width:300px}.print-title{display:block!important;margin:0 0 10px}.kv{font-size:11px}}
+  </style>
+</head>
+<body>
+<header class="no-print">
+  <div class="wrap top">
+    <div class="brand">
+      <div class="logo">QR</div>
+      <div>
+        <h1>VietQR Salary Batch</h1>
+        <div class="sub">Tạo nhiều mã VietQR chuyển lương/thưởng từ Excel, CSV hoặc paste text. Không tự động chuyển tiền.</div>
+      </div>
+    </div>
+    <div class="row">
+      <span id="bankStatus" class="pill">Đang tải bank list...</span>
+      <button class="btn gray" id="btnLoadBanks">Reload bank list</button>
+      <a class="btn soft" href="./templates/vietqr_salary_batch_template.xlsx" download>Download Excel template</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <section class="left-panel card no-print">
+      <h2>1) Nhập dữ liệu</h2>
+      <div class="field">
+        <label>Kỳ thanh toán / Batch title</label>
+        <input id="batchTitle" value="Lương tháng 4.2026" placeholder="VD: Lương tháng 4.2026" />
+      </div>
+      <div class="field">
+        <label>Paste nội dung lương/thưởng</label>
+        <textarea id="rawText" spellcheck="false">Lương tháng 4.2026 
+
+Nguyen Thanh Dien 
+060274629617
+Sacombank
+5368k
+ 
+
+Nội dung:
+Lương CTV Thang 4.2026 Nguyen Thanh Dien
+
+----
+Lam Dinh An
+19038844801015
+Techcombank
+4370k
+
+Nội dung:
+Lương CTV Thang 4.2026 Lam Dinh An
+
+-----
+
+Pham Thi Linh Uyen
+Mb bank
+92292113012013
+10tr
+
+Nội dung:
+Lương nhân viên Thang 4.2026 Pham Thi Linh Uyen</textarea>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="btnParse">Parse text</button>
+        <button class="btn gray" id="btnAddRow">+ Thêm dòng</button>
+        <button class="btn danger" id="btnClear">Xóa bảng</button>
+      </div>
+      <div class="notice">
+        Nên dùng nội dung chuyển khoản không dấu, không ký tự đặc biệt và tối đa 50 ký tự để tương thích tốt với VietQR Quick Link.
+      </div>
+      <div class="field">
+        <label>Import Excel/CSV</label>
+        <div class="drop">
+          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
+          <div class="tiny">Header hỗ trợ: Name, Bank, Account No, Amount, Transfer Content</div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn soft" id="btnSample">Nạp dữ liệu mẫu</button>
+        <button class="btn gray" id="btnExportCsv">Export CSV</button>
+        <button class="btn gray" id="btnSaveHistory">Lưu log batch</button>
+      </div>
+      <div class="footer">
+        Dữ liệu chỉ lưu trong trình duyệt của bạn bằng localStorage. App không gửi danh sách lương lên server riêng.
+      </div>
+
+      <h2 style="margin-top:18px">Log local</h2>
+      <div id="historyList" class="tiny"></div>
+    </section>
+
+    <section>
+      <div class="card table-card no-print">
+        <div class="split">
+          <h2>2) Kiểm tra danh sách</h2>
+          <div class="row">
+            <button class="btn primary" id="btnGenerate">Tạo QR</button>
+            <button class="btn gray" id="btnPrint">In / Save PDF</button>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><span>Số lệnh</span><b id="statCount">0</b></div>
+          <div class="stat"><span>Tổng tiền</span><b id="statTotal">0đ</b></div>
+          <div class="stat"><span>Hợp lệ</span><b id="statValid">0</b></div>
+          <div class="stat"><span>Cần kiểm tra</span><b id="statInvalid">0</b></div>
+        </div>
+        <div id="messageBox"></div>
+        <div class="table-wrap">
+          <table class="pay-table">
+            <thead>
+              <tr>
+                <th style="width:44px">#</th>
+                <th style="width:175px">Người nhận</th>
+                <th style="width:150px">Số TK</th>
+                <th style="width:190px">Ngân hàng</th>
+                <th style="width:130px">Số tiền</th>
+                <th>Nội dung CK</th>
+                <th style="width:120px">Trạng thái</th>
+                <th style="width:80px">Xóa</th>
+              </tr>
+            </thead>
+            <tbody id="payRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" id="qrSection">
+        <h2 class="print-title hidden" id="printTitle">VietQR Salary Batch</h2>
+        <div class="split no-print">
+          <div>
+            <h2>3) Mã VietQR</h2>
+            <div class="tiny">Quét từng mã bằng app ngân hàng, kiểm tra lại người nhận/số tiền/nội dung rồi xác nhận.</div>
+          </div>
+          <div class="row">
+            <button class="btn gray" id="btnQrOnly">Template: compact2</button>
+            <button class="btn gray" id="btnCopyAllLinks">Copy all links</button>
+          </div>
+        </div>
+        <div id="qrList" class="qr-grid"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+const LS_KEY = 'vietqr_salary_batches_v1';
+let banks = [];
+let rows = [];
+let currentTemplate = 'compact2';
+
+const fallbackBanks = [
+  {code:'ICB', bin:'970415', shortName:'VietinBank', name:'Ngân hàng TMCP Công thương Việt Nam', transferSupported:1},
+  {code:'VCB', bin:'970436', shortName:'Vietcombank', name:'Ngân hàng TMCP Ngoại Thương Việt Nam', transferSupported:1},
+  {code:'BIDV', bin:'970418', shortName:'BIDV', name:'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam', transferSupported:1},
+  {code:'VBA', bin:'970405', shortName:'Agribank', name:'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam', transferSupported:1},
+  {code:'OCB', bin:'970448', shortName:'OCB', name:'Ngân hàng TMCP Phương Đông', transferSupported:1},
+  {code:'MB', bin:'970422', shortName:'MBBank', name:'Ngân hàng TMCP Quân đội', transferSupported:1},
+  {code:'TCB', bin:'970407', shortName:'Techcombank', name:'Ngân hàng TMCP Kỹ thương Việt Nam', transferSupported:1},
+  {code:'ACB', bin:'970416', shortName:'ACB', name:'Ngân hàng TMCP Á Châu', transferSupported:1},
+  {code:'VPB', bin:'970432', shortName:'VPBank', name:'Ngân hàng TMCP Việt Nam Thịnh Vượng', transferSupported:1},
+  {code:'TPB', bin:'970423', shortName:'TPBank', name:'Ngân hàng TMCP Tiên Phong', transferSupported:1},
+  {code:'STB', bin:'970403', shortName:'Sacombank', name:'Ngân hàng TMCP Sài Gòn Thương Tín', transferSupported:1},
+  {code:'HDB', bin:'970437', shortName:'HDBank', name:'Ngân hàng TMCP Phát triển TP.HCM', transferSupported:1},
+  {code:'VIB', bin:'970441', shortName:'VIB', name:'Ngân hàng TMCP Quốc tế Việt Nam', transferSupported:1},
+  {code:'SHB', bin:'970443', shortName:'SHB', name:'Ngân hàng TMCP Sài Gòn - Hà Nội', transferSupported:1},
+  {code:'EIB', bin:'970431', shortName:'Eximbank', name:'Ngân hàng TMCP Xuất Nhập khẩu Việt Nam', transferSupported:1},
+  {code:'MSB', bin:'970426', shortName:'MSB', name:'Ngân hàng TMCP Hàng Hải Việt Nam', transferSupported:1},
+  {code:'LPB', bin:'970449', shortName:'LPBank', name:'Ngân hàng TMCP Lộc Phát Việt Nam', transferSupported:1},
+  {code:'PVCB', bin:'970412', shortName:'PVcomBank', name:'Ngân hàng TMCP Đại Chúng Việt Nam', transferSupported:1}
+];
+
+const aliases = {
+  'mb bank':'MB','mbbank':'MB','mb':'MB','m b bank':'MB','quan doi':'MB',
+  'techcombank':'TCB','tech':'TCB','tcb':'TCB',
+  'sacombank':'STB','stb':'STB','sacom':'STB',
+  'vietcombank':'VCB','vcb':'VCB','ngoai thuong':'VCB',
+  'bidv':'BIDV','dau tu phat trien':'BIDV',
+  'vietinbank':'ICB','vietin':'ICB','icb':'ICB','cong thuong':'ICB',
+  'agribank':'VBA','nong nghiep':'VBA','vba':'VBA',
+  'acb':'ACB','vpbank':'VPB','tpbank':'TPB','hdbank':'HDB','vib':'VIB','shb':'SHB','msb':'MSB','eximbank':'EIB','lpbank':'LPB','pvcombank':'PVCB','ocb':'OCB'
+};
+
+function stripDiacritics(s=''){
+  return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');
+}
+function normalizeKey(s=''){
+  return stripDiacritics(s).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+}
+function safeText(s='', max=50){
+  return stripDiacritics(String(s || '')).replace(/[^a-zA-Z0-9\s]/g,' ').replace(/\s+/g,' ').trim().slice(0,max).trim();
+}
+function formatVnd(n){
+  n = Number(n || 0);
+  return n.toLocaleString('vi-VN') + 'đ';
+}
+function parseAmount(v){
+  if(v == null) return 0;
+  let raw = String(v).trim().toLowerCase();
+  if(!raw) return 0;
+  raw = raw.replace(/\s+/g,'');
+  const hasMillion = /(tr|trieu|triệu|m)$/i.test(raw);
+  const hasK = /(k|nghin|nghìn)$/i.test(raw);
+  let numPart = raw.replace(/(vnd|vnđ|đ|d)$/i,'').replace(/(trieu|triệu|tr|m|nghin|nghìn|k)$/i,'');
+  if(hasMillion){
+    numPart = numPart.replace(',','.');
+    const n = parseFloat(numPart.replace(/[^0-9.]/g,''));
+    return Math.round((isNaN(n)?0:n) * 1000000);
+  }
+  if(hasK){
+    numPart = numPart.replace(',','.');
+    const n = parseFloat(numPart.replace(/[^0-9.]/g,''));
+    return Math.round((isNaN(n)?0:n) * 1000);
+  }
+  const onlyDigits = raw.replace(/[^0-9]/g,'');
+  return Number(onlyDigits || 0);
+}
+function isAccountCandidate(line){
+  const s = String(line||'').replace(/\s+/g,'');
+  return /^[0-9A-Za-z]{6,19}$/.test(s) && /\d{6,}/.test(s) && !/(k|tr|trieu|triệu|vnd|đ)$/i.test(s);
+}
+function isAmountCandidate(line){
+  const s = String(line||'').trim().toLowerCase();
+  if(!s) return false;
+  if(/\d+\s*(k|nghin|nghìn|tr|trieu|triệu|m|vnd|vnđ|đ)$/i.test(s)) return true;
+  const digits = s.replace(/[^0-9]/g,'');
+  return digits.length >= 5 && !isAccountCandidate(s);
+}
+function findBank(input){
+  const raw = String(input||'').trim();
+  if(!raw) return null;
+  const key = normalizeKey(raw);
+  const compact = key.replace(/\s+/g,'');
+  const directCode = aliases[key] || aliases[compact];
+  let found = directCode ? banks.find(b => b.code === directCode) : null;
+  if(found) return found;
+  found = banks.find(b => [b.bin, b.code, b.shortName, b.short_name, b.name].filter(Boolean).some(x => normalizeKey(x) === key || normalizeKey(x).replace(/\s+/g,'') === compact));
+  if(found) return found;
+  found = banks.find(b => normalizeKey(b.shortName||'').includes(key) || key.includes(normalizeKey(b.shortName||'')) || normalizeKey(b.name||'').includes(key));
+  return found || null;
+}
+function normalizeBankValue(input){
+  const b = findBank(input);
+  return b ? b.bin : String(input||'').trim();
+}
+function getBankByBin(bin){ return banks.find(b => b.bin === String(bin)); }
+function bankLabel(b){ return b ? `${b.shortName || b.code} — ${b.bin}` : ''; }
+
+async function loadBanks(){
+  const el = document.getElementById('bankStatus');
+  el.textContent = 'Đang tải bank list...';
+  try{
+    const res = await fetch('https://api.vietqr.io/v2/banks', {cache:'no-store'});
+    const json = await res.json();
+    if(json && json.code === '00' && Array.isArray(json.data)){
+      banks = json.data.filter(b => String(b.transferSupported ?? b.isTransfer ?? 1) !== '0');
+      el.textContent = `Bank list online: ${banks.length} banks`;
+      el.style.color = '#166534';
+    } else throw new Error('Invalid bank list');
+  }catch(e){
+    banks = fallbackBanks;
+    el.textContent = `Fallback bank list: ${banks.length} banks`;
+    el.style.color = '#92400e';
+  }
+  renderRows();
+}
+
+function splitBlocks(text){
+  const normalized = String(text||'').replace(/\r/g,'').trim();
+  let blocks = normalized.split(/\n\s*-{3,}\s*\n/g).map(x => x.trim()).filter(Boolean);
+  if(blocks.length === 1){
+    blocks = normalized.split(/\n\s*\n\s*(?=[A-ZÀ-Ỵa-zà-ỵ][^\n]{2,60}\n)/g).map(x => x.trim()).filter(Boolean);
+  }
+  return blocks;
+}
+function parseTextToRows(text){
+  const blocks = splitBlocks(text);
+  const out = [];
+  blocks.forEach((block, idx) => {
+    let lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    if(!lines.length) return;
+    if(idx === 0 && /^l[uư]ơng\s+th[aá]ng/i.test(lines[0]) && lines.length > 4) lines = lines.slice(1);
+    let content = '';
+    let contentIndex = lines.findIndex(l => /^n[oộ]i\s*dung\s*:?/i.test(l));
+    if(contentIndex >= 0){
+      const same = lines[contentIndex].replace(/^n[oộ]i\s*dung\s*:?\s*/i,'').trim();
+      const after = lines.slice(contentIndex + 1).join(' ').trim();
+      content = same || after;
+      lines = lines.slice(0, contentIndex);
+    }
+    let account = '', bankInput = '', amountRaw = '', name = '';
+    const used = new Set();
+    for(let i=0;i<lines.length;i++){
+      if(!account && isAccountCandidate(lines[i])){ account = lines[i].replace(/\s+/g,''); used.add(i); }
+    }
+    for(let i=0;i<lines.length;i++){
+      if(used.has(i)) continue;
+      if(!amountRaw && isAmountCandidate(lines[i])){ amountRaw = lines[i]; used.add(i); }
+    }
+    for(let i=0;i<lines.length;i++){
+      if(used.has(i)) continue;
+      if(findBank(lines[i]) || /bank|ngan hang|ngân hàng/i.test(stripDiacritics(lines[i]))){ bankInput = lines[i]; used.add(i); break; }
+    }
+    for(let i=0;i<lines.length;i++){
+      if(used.has(i)) continue;
+      if(/[a-zA-ZÀ-Ỵà-ỵ]/.test(lines[i])){ name = lines[i]; used.add(i); break; }
+    }
+    if(!name && lines.length) name = lines[0];
+    const amount = parseAmount(amountRaw);
+    if(!content && name){
+      const title = document.getElementById('batchTitle').value || 'Lương';
+      content = `${title} ${name}`;
+    }
+    out.push({
+      name, accountNo: account, bankInput, bankBin: normalizeBankValue(bankInput), amount, amountRaw, addInfo: content, note: ''
+    });
+  });
+  return out;
+}
+
+function validateRow(r){
+  const errors = [];
+  const bank = getBankByBin(r.bankBin) || findBank(r.bankBin || r.bankInput);
+  if(!r.name || String(r.name).trim().length < 2) errors.push('Thiếu tên');
+  if(!r.accountNo || !/^[0-9A-Za-z]{6,19}$/.test(String(r.accountNo).trim())) errors.push('Số TK 6-19 ký tự');
+  if(!bank) errors.push('Chưa khớp ngân hàng');
+  if(!Number(r.amount) || Number(r.amount) <= 0) errors.push('Số tiền sai');
+  const info = safeText(r.addInfo, 50);
+  if(!info) errors.push('Thiếu nội dung');
+  if(String(r.addInfo||'').length > 50) errors.push('Nội dung > 50, sẽ bị cắt');
+  return {ok: errors.length === 0 || (errors.length === 1 && errors[0].includes('cắt')), errors, bank};
+}
+
+function bankOptions(selected){
+  const opts = banks.map(b => `<option value="${b.bin}" ${String(selected)===String(b.bin)?'selected':''}>${escapeHtml(b.shortName || b.code)} — ${b.bin}</option>`).join('');
+  return `<option value="">Chọn bank...</option>${opts}`;
+}
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+function renderRows(){
+  const tbody = document.getElementById('payRows');
+  tbody.innerHTML = '';
+  rows.forEach((r, i) => {
+    const v = validateRow(r);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td><input data-i="${i}" data-k="name" value="${escapeHtml(r.name)}" placeholder="Tên người nhận"></td>
+      <td><input data-i="${i}" data-k="accountNo" value="${escapeHtml(r.accountNo)}" placeholder="Số tài khoản"></td>
+      <td><select data-i="${i}" data-k="bankBin">${bankOptions(r.bankBin)}</select><div class="tiny">${escapeHtml(r.bankInput || '')}</div></td>
+      <td><input class="num" data-i="${i}" data-k="amount" value="${Number(r.amount||0)}" placeholder="VD 5368000"></td>
+      <td><input data-i="${i}" data-k="addInfo" value="${escapeHtml(r.addInfo)}" placeholder="Nội dung chuyển khoản"><div class="tiny">QR dùng: <span class="mono">${escapeHtml(safeText(r.addInfo,50))}</span></div></td>
+      <td>${v.ok ? `<span class="status ok">OK</span>` : `<span class="status err">Lỗi</span>`}<div class="tiny ${v.ok?'':'danger-text'}">${escapeHtml(v.errors.join(', '))}</div></td>
+      <td><button class="btn danger" data-del="${i}" type="button">Xóa</button></td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('input,select').forEach(el => el.addEventListener('input', onCellEdit));
+  tbody.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', () => { rows.splice(Number(btn.dataset.del),1); renderRows(); renderQr(); }));
+  updateStats();
+}
+function onCellEdit(e){
+  const i = Number(e.target.dataset.i); const k = e.target.dataset.k;
+  if(!rows[i]) return;
+  let val = e.target.value;
+  if(k === 'amount') val = parseAmount(val);
+  rows[i][k] = val;
+  if(k === 'bankBin') rows[i].bankInput = bankLabel(getBankByBin(val));
+  updateStats();
+}
+function updateStats(){
+  const valid = rows.filter(r => validateRow(r).ok).length;
+  const total = rows.reduce((s,r)=>s + Number(r.amount||0),0);
+  document.getElementById('statCount').textContent = rows.length;
+  document.getElementById('statTotal').textContent = formatVnd(total);
+  document.getElementById('statValid').textContent = valid;
+  document.getElementById('statInvalid').textContent = rows.length - valid;
+}
+function showMessage(type, html){
+  const box = document.getElementById('messageBox');
+  box.innerHTML = html ? `<div class="${type==='error'?'errorbox':type==='ok'?'okbox':'notice'}">${html}</div>` : '';
+}
+function buildQrUrl(r){
+  const bank = getBankByBin(r.bankBin) || findBank(r.bankInput || r.bankBin);
+  const bankId = bank ? bank.bin : String(r.bankBin || r.bankInput || '').trim();
+  const acc = String(r.accountNo || '').replace(/\s+/g,'');
+  const amount = Number(r.amount || 0);
+  const info = safeText(r.addInfo, 50);
+  const name = safeText(r.name, 50).toUpperCase();
+  return `https://img.vietqr.io/image/${encodeURIComponent(bankId)}-${encodeURIComponent(acc)}-${currentTemplate}.png?amount=${amount}&addInfo=${encodeURIComponent(info)}&accountName=${encodeURIComponent(name)}`;
+}
+function renderQr(){
+  const list = document.getElementById('qrList');
+  list.innerHTML = '';
+  const validRows = rows.map((r,i)=>({r,i,v:validateRow(r)})).filter(x => x.v.ok);
+  if(!validRows.length){
+    list.innerHTML = '<div class="notice no-print">Chưa có dòng hợp lệ để tạo QR.</div>';
+    return;
+  }
+  document.getElementById('printTitle').textContent = document.getElementById('batchTitle').value || 'VietQR Salary Batch';
+  validRows.forEach(({r,i,v}) => {
+    const url = buildQrUrl(r);
+    const bank = v.bank;
+    const div = document.createElement('div');
+    div.className = 'qr-card';
+    div.innerHTML = `
+      <div class="split"><h3>${i+1}. ${escapeHtml(r.name)}</h3><span class="status ok">${escapeHtml(bank?.shortName || bank?.code || '')}</span></div>
+      <img class="qr-img" src="${url}" alt="VietQR ${escapeHtml(r.name)}" loading="lazy" onerror="this.insertAdjacentHTML('afterend','<div class=errorbox>Không tải được QR image. Kiểm tra internet hoặc bank/account.</div>')" />
+      <div class="kv">
+        <div>Ngân hàng</div><div><b>${escapeHtml(bankLabel(bank))}</b></div>
+        <div>Số TK</div><div class="mono">${escapeHtml(r.accountNo)}</div>
+        <div>Số tiền</div><div><b>${formatVnd(r.amount)}</b></div>
+        <div>Nội dung</div><div class="mono">${escapeHtml(safeText(r.addInfo,50))}</div>
+      </div>
+      <div class="row no-print" style="margin-top:10px">
+        <a class="btn gray" href="${url}" target="_blank" rel="noreferrer">Mở ảnh QR</a>
+        <button class="btn soft" data-copy="${escapeHtml(url)}">Copy link</button>
+      </div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async()=>{
+    await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Đã copy'; setTimeout(()=>btn.textContent='Copy link',1200);
+  }));
+}
+function parseAndRender(){
+  rows = parseTextToRows(document.getElementById('rawText').value);
+  renderRows();
+  renderQr();
+  const bad = rows.filter(r=>!validateRow(r).ok).length;
+  showMessage(bad ? 'warn' : 'ok', bad ? `Đã parse ${rows.length} dòng, có ${bad} dòng cần kiểm tra.` : `Đã parse ${rows.length} dòng hợp lệ.`);
+}
+function addRow(){
+  rows.push({name:'', accountNo:'', bankInput:'', bankBin:'', amount:0, addInfo:'', note:''});
+  renderRows();
+}
+function exportCsv(){
+  const headers = ['Name','Bank BIN','Bank','Account No','Amount VND','Transfer Content','QR Link'];
+  const data = rows.map(r => {
+    const bank = getBankByBin(r.bankBin) || findBank(r.bankInput);
+    return [r.name, bank?.bin || r.bankBin, bank?.shortName || r.bankInput, r.accountNo, Number(r.amount||0), safeText(r.addInfo,50), validateRow(r).ok ? buildQrUrl(r) : ''];
+  });
+  const csv = [headers, ...data].map(row => row.map(v => '"' + String(v ?? '').replace(/"/g,'""') + '"').join(',')).join('\n');
+  downloadBlob(csv, `vietqr_salary_batch_${Date.now()}.csv`, 'text/csv;charset=utf-8');
+}
+function downloadBlob(content, filename, type){
+  const blob = new Blob([content], {type});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click(); URL.revokeObjectURL(a.href);
+}
+function saveHistory(){
+  const history = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  const item = {id: Date.now(), title: document.getElementById('batchTitle').value || 'Untitled batch', createdAt: new Date().toISOString(), rows};
+  history.unshift(item);
+  localStorage.setItem(LS_KEY, JSON.stringify(history.slice(0,20)));
+  renderHistory(); showMessage('ok','Đã lưu log batch vào trình duyệt.');
+}
+function renderHistory(){
+  const box = document.getElementById('historyList');
+  const history = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+  if(!history.length){ box.innerHTML = 'Chưa có log.'; return; }
+  box.innerHTML = history.map(h => `<div class="history-item"><div><b>${escapeHtml(h.title)}</b><br>${new Date(h.createdAt).toLocaleString('vi-VN')} · ${h.rows?.length||0} dòng</div><button data-loadhist="${h.id}">Load</button></div>`).join('');
+  box.querySelectorAll('[data-loadhist]').forEach(btn => btn.addEventListener('click',()=>{
+    const item = history.find(h => String(h.id) === String(btn.dataset.loadhist));
+    if(item){ document.getElementById('batchTitle').value = item.title; rows = item.rows || []; renderRows(); renderQr(); }
+  }));
+}
+function loadSample(){
+  document.getElementById('rawText').value = `Lương tháng 4.2026 \n\nNguyen Thanh Dien \n060274629617\nSacombank\n5368k\n \n\nNội dung:\nLương CTV Thang 4.2026 Nguyen Thanh Dien\n\n----\nLam Dinh An\n19038844801015\nTechcombank\n4370k\n\nNội dung:\nLương CTV Thang 4.2026 Lam Dinh An\n\n-----\n\nPham Thi Linh Uyen\nMb bank\n92292113012013\n10tr\n\nNội dung:\nLương nhân viên Thang 4.2026 Pham Thi Linh Uyen`;
+  parseAndRender();
+}
+function rowFromObject(obj){
+  const get = (...names) => {
+    const keys = Object.keys(obj || {});
+    for(const n of names){
+      const nk = normalizeKey(n);
+      const key = keys.find(k => normalizeKey(k) === nk || normalizeKey(k).includes(nk));
+      if(key != null && obj[key] != null) return obj[key];
+    }
+    return '';
+  };
+  const bankInput = get('Bank','Ngân hàng','Ngan hang','Bank Name','Bank Code');
+  return {
+    name: String(get('Name','Tên người nhận','Ten nguoi nhan','Account Name','Beneficiary Name')).trim(),
+    accountNo: String(get('Account No','Số tài khoản','So tai khoan','Account Number','AccountNo')).trim().replace(/\s+/g,''),
+    bankInput: String(bankInput||'').trim(),
+    bankBin: normalizeBankValue(bankInput),
+    amount: parseAmount(get('Amount','Số tiền','So tien','Amount VND','Số tiền VND')),
+    addInfo: String(get('Transfer Content','Nội dung','Noi dung','Add Info','Description')).trim(),
+    note: String(get('Note','Ghi chú','Ghi chu')).trim()
+  };
+}
+function importRowsFromArray(arr){
+  const imported = arr.map(rowFromObject).filter(r => r.name || r.accountNo || r.bankInput || r.amount || r.addInfo);
+  rows = imported;
+  renderRows(); renderQr();
+  showMessage(imported.length ? 'ok' : 'warn', imported.length ? `Đã import ${imported.length} dòng.` : 'Không đọc được dòng nào. Kiểm tra header template.');
+}
+async function handleFile(file){
+  if(!file) return;
+  const name = file.name.toLowerCase();
+  if(name.endsWith('.csv')){
+    const text = await file.text();
+    const lines = text.split(/\r?\n/).filter(Boolean);
+    const headers = parseCsvLine(lines[0] || '');
+    const arr = lines.slice(1).map(line => {
+      const vals = parseCsvLine(line); const obj={}; headers.forEach((h,i)=>obj[h]=vals[i]||''); return obj;
+    });
+    importRowsFromArray(arr);
+  } else {
+    if(!window.XLSX){ showMessage('error','Không tải được thư viện đọc Excel từ CDN. Hãy dùng CSV hoặc bật internet rồi reload.'); return; }
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, {type:'array'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const arr = XLSX.utils.sheet_to_json(ws, {defval:''});
+    importRowsFromArray(arr);
+  }
+}
+function parseCsvLine(line){
+  const out=[]; let cur=''; let quote=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c === '"' && line[i+1] === '"'){cur+='"'; i++; continue;}
+    if(c === '"'){quote=!quote; continue;}
+    if(c === ',' && !quote){out.push(cur); cur=''; continue;}
+    cur += c;
+  }
+  out.push(cur); return out.map(x=>x.trim());
+}
+
+// Events
+btnParse.addEventListener('click', parseAndRender);
+btnAddRow.addEventListener('click', addRow);
+btnClear.addEventListener('click', () => { if(confirm('Xóa toàn bộ bảng hiện tại?')){ rows=[]; renderRows(); renderQr(); }});
+btnGenerate.addEventListener('click', () => { renderRows(); renderQr(); document.getElementById('qrSection').scrollIntoView({behavior:'smooth'}); });
+btnPrint.addEventListener('click', () => { renderQr(); window.print(); });
+btnSample.addEventListener('click', loadSample);
+btnExportCsv.addEventListener('click', exportCsv);
+btnSaveHistory.addEventListener('click', saveHistory);
+btnLoadBanks.addEventListener('click', loadBanks);
+fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+btnQrOnly.addEventListener('click', () => {
+  const order = ['compact2','compact','qr_only','print'];
+  currentTemplate = order[(order.indexOf(currentTemplate)+1) % order.length];
+  btnQrOnly.textContent = `Template: ${currentTemplate}`;
+  renderQr();
+});
+btnCopyAllLinks.addEventListener('click', async () => {
+  const links = rows.filter(r=>validateRow(r).ok).map((r,i)=>`${i+1}. ${r.name}: ${buildQrUrl(r)}`).join('\n');
+  await navigator.clipboard.writeText(links);
+  btnCopyAllLinks.textContent = 'Đã copy'; setTimeout(()=>btnCopyAllLinks.textContent='Copy all links',1200);
+});
+
+document.addEventListener('click', async e => {
+  const t = e.target;
+  if(t.classList && t.classList.contains('copyable')){
+    await navigator.clipboard.writeText(t.textContent); t.title='Đã copy';
+  }
+});
+
+loadBanks().then(()=>{ parseAndRender(); renderHistory(); });
+</script>
+</body>
+</html>
