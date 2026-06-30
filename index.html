@@ -56,7 +56,7 @@
       border-bottom: 1px solid #1e293b;
       color: #fff;
     }
-    .wrap { max-width: 1260px; margin: 0 auto; padding: 16px 20px; }
+    .wrap { max-width: 1440px; margin: 0 auto; padding: 16px 20px; }
     .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
     .brand { display: flex; align-items: center; gap: 12px; }
     .logo {
@@ -246,6 +246,47 @@
     .danger-text { color: var(--danger); font-weight: 500; }
     .copyable { cursor: pointer; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
     
+    /* Recipient Card inside combined table cell */
+    .recipient-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+      min-width: 260px;
+    }
+    .recipient-card .sub-field {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .recipient-card .sub-field label {
+      font-weight: 600;
+      font-size: 11.5px;
+      color: var(--muted);
+      width: 76px;
+      flex-shrink: 0;
+      text-align: left;
+    }
+    .recipient-card .sub-field input, .recipient-card .sub-field select {
+      flex: 1;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 13px;
+      height: 32px;
+      min-height: 32px;
+      width: 100%;
+    }
+    .pay-table td .tiny {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 250px;
+      text-align: left;
+      margin-top: 4px;
+      display: block;
+    }
+    
     /* Mobile styles overrides */
     @media (max-width: 768px) {
       .tabs-container {
@@ -301,6 +342,26 @@
       .responsive-table td input, .responsive-table td select { width: 60% !important; max-width: 250px; font-size: 13px; height: 36px; min-height: 36px; padding: 6px 8px; }
       .responsive-table td.num input { text-align: right; }
       .responsive-table td .tiny { margin-top: 2px; }
+      
+      /* Stack layout on mobile for recipient card */
+      .responsive-table td[data-label="Thông tin nhận"] {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 0;
+      }
+      .responsive-table td[data-label="Thông tin nhận"]::before {
+        margin-bottom: 6px;
+      }
+      .responsive-table td[data-label="Thông tin nhận"] .recipient-card {
+        min-width: 0 !important;
+        width: 100% !important;
+      }
+      .responsive-table td[data-label="Thông tin nhận"] .recipient-card .sub-field input,
+      .responsive-table td[data-label="Thông tin nhận"] .recipient-card .sub-field select {
+        width: 100% !important;
+        max-width: none !important;
+      }
     }
     
     @media print {
@@ -419,16 +480,14 @@
             <table class="pay-table responsive-table">
               <thead>
                 <tr>
-                  <th style="width:44px">#</th>
-                  <th style="width:175px">Người nhận</th>
-                  <th style="width:150px">Số TK</th>
-                  <th style="width:190px">Ngân hàng</th>
-                  <th style="width:130px">Số tiền</th>
+                  <th style="width:40px">#</th>
+                  <th style="width:320px">Thông tin nhận</th>
+                  <th style="width:140px">Số tiền</th>
                   <th>Nội dung CK</th>
-                  <th style="width:140px">Nhóm</th>
+                  <th style="width:130px">Nhóm</th>
                   <th style="width:120px">Thanh toán</th>
                   <th style="width:80px">Hợp lệ</th>
-                  <th style="width:80px">Xóa</th>
+                  <th style="width:60px">Xóa</th>
                 </tr>
               </thead>
               <tbody id="payRows"></tbody>
@@ -955,15 +1014,32 @@ function renderRows(){
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td data-label="#">${i+1}</td>
-      <td data-label="Người nhận"><input data-i="${i}" data-k="name" value="${escapeHtml(r.name)}" placeholder="Tên người nhận"></td>
-      <td data-label="Số TK"><input data-i="${i}" data-k="accountNo" value="${escapeHtml(r.accountNo)}" placeholder="Số tài khoản"></td>
-      <td data-label="Ngân hàng"><select data-i="${i}" data-k="bankBin">${bankOptions(r.bankBin)}</select><div class="tiny">${escapeHtml(r.bankInput || '')}</div></td>
+      <td data-label="Thông tin nhận">
+        <div class="recipient-card">
+          <div class="sub-field">
+            <label>Người nhận</label>
+            <input data-i="${i}" data-k="name" value="${escapeHtml(r.name)}" placeholder="Tên người nhận">
+          </div>
+          <div class="sub-field">
+            <label>Số TK</label>
+            <input data-i="${i}" data-k="accountNo" value="${escapeHtml(r.accountNo)}" placeholder="Số tài khoản">
+          </div>
+          <div class="sub-field">
+            <label>Ngân hàng</label>
+            <select data-i="${i}" data-k="bankBin">${bankOptions(r.bankBin)}</select>
+          </div>
+          <div class="tiny" style="padding-left: 82px; margin-top: 2px;">${escapeHtml(r.bankInput || '')}</div>
+        </div>
+      </td>
       <td data-label="Số tiền" class="num"><input class="num" data-i="${i}" data-k="amount" value="${Number(r.amount||0)}" placeholder="VD 5368000"></td>
-      <td data-label="Nội dung CK"><input data-i="${i}" data-k="addInfo" value="${escapeHtml(r.addInfo)}" placeholder="Nội dung chuyển khoản"><div class="tiny">QR dùng: <span class="mono">${escapeHtml(safeText(r.addInfo,50))}</span></div></td>
+      <td data-label="Nội dung CK">
+        <input data-i="${i}" data-k="addInfo" value="${escapeHtml(r.addInfo)}" placeholder="Nội dung chuyển khoản">
+        <div class="tiny">QR dùng: <span class="mono">${escapeHtml(safeText(r.addInfo,50))}</span></div>
+      </td>
       <td data-label="Nhóm"><select data-i="${i}" data-k="groupName">${groupOptions(r.groupName || 'Chưa phân nhóm')}</select></td>
       <td data-label="Thanh toán"><select class="status-select status-${r.paymentStatus || 'new'}" data-i="${i}" data-k="paymentStatus">${paymentStatusOptions(r.paymentStatus || 'new')}</select></td>
       <td data-label="Hợp lệ">${v.ok ? `<span class="status ok">OK</span>` : `<span class="status err">Lỗi</span>`}<div class="tiny ${v.ok?'':'danger-text'}">${escapeHtml(v.errors.join(', '))}</div></td>
-      <td data-label="Xóa"><button class="btn danger" style="padding: 6px 10px; font-size: 12.5px;" data-del="${i}" type="button"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Xóa</button></td>`;
+      <td data-label="Xóa"><button class="btn danger" style="padding: 6px; min-height: 32px; height: 32px;" data-del="${i}" type="button"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td>`;
     tbody.appendChild(tr);
   });
   tbody.querySelectorAll('input,select').forEach(el => {
